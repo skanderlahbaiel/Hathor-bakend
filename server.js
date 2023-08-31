@@ -28,24 +28,35 @@ app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
 
+// Listen for custom events to broadcast data
+eventEmitter.on("broadcast", (data) => {
+  // Broadcast the data to connected clients
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+});
+
 // Listen for WebSocket connections
 wss.on("connection", (socket) => {
   console.log("A new client connected to WebSocket");
+  connectedClients.add(socket);
+  // Display the number of connected clients
+  console.log("Number of connected clients:", connectedClients.size);
+
+// Handle WebSocket close event
+socket.on("close", () => {
+  console.log("A client disconnected from WebSocket");
+  connectedClients.delete(socket); // Remove the disconnected socket
+});
 
   // Handle WebSocket events
   socket.on("message", (message) => {
     console.log("Received message:", message);
   });
 
-  // Listen for custom events to broadcast data
-  eventEmitter.on("broadcast", (data) => {
-    // Broadcast the data to connected clients
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(data));
-      }
-    });
-  });
+  socket.send('New client connected');
 });
 
 // Start the combined HTTP and WebSocket server
