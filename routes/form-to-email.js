@@ -11,7 +11,9 @@ router.post("/send-email", (req, res) => {
   const comments = req.body.comments;
   const bookingSubject = req.body.subject;
   const date = req.body.date;
-  const textToSend = `Booking request received at ${Date()}\nName: ${fullname}\nE-mail: ${email}\nSubject:${bookingSubject}\nAt:${time}\nComments: ${comments}\nRequest creation: ${date}`;
+  const phone = req.body.phone;
+  const creationDate = req.body.creationDate
+  const textToSend = `Booking request received at ${Date()}\nName: ${fullname}\nE-mail: ${email}\nSubject:${bookingSubject}\nAt:${time}\nComments: ${comments}\nRequest creation: ${date}\nPhone number: ${phone}\nCreation date: ${creationDate}`;
   // Display data to console
   console.log(textToSend);
   // Emit a custom event to send data to WebSocket server

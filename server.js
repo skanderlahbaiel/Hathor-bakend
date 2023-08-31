@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
-// Create a shared event emitter
+
 
 app.use(express.json()); // Parse incoming JSON data
 app.use("/booking", formToEmailRoute);
@@ -40,7 +40,7 @@ eventEmitter.on("broadcast", (data) => {
 
 // Listen for WebSocket connections
 wss.on("connection", (socket) => {
-  console.log("A new client connected to WebSocket");
+  console.log("A new client connected to WebSocket OnConnection");
   connectedClients.add(socket);
   // Display the number of connected clients
   console.log("Number of connected clients:", connectedClients.size);
@@ -49,14 +49,16 @@ wss.on("connection", (socket) => {
 socket.on("close", () => {
   console.log("A client disconnected from WebSocket");
   connectedClients.delete(socket); // Remove the disconnected socket
+  console.log("Number of connected clients after deletion:", connectedClients.size);
 });
 
   // Handle WebSocket events
   socket.on("message", (message) => {
     console.log("Received message:", message);
+    socket.send('Backend Websocket server received message');
   });
 
-  socket.send('New client connected');
+  
 });
 
 // Start the combined HTTP and WebSocket server
