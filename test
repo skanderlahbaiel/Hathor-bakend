@@ -1,0 +1,46 @@
+const mysql = require('mysql'); // Import the mysql library
+
+// MySQL database connection configuration
+const dbConfig = {
+  host: 'DESKTOP-42SISVB',
+  user: 'root',
+  password: 'skanderR1deathnote',
+  database: 'your_mysql_database',
+};
+
+// Function to append data to a MySQL database
+const appendToBookingMySQL = (data) => {
+  const connection = mysql.createConnection(dbConfig);
+
+  // Connect to the MySQL database
+  connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL:', err);
+      return;
+    }
+
+    // Insert the data into a MySQL table (adjust table name and structure)
+    const sql = 'INSERT INTO your_table_name (column1, column2, column3) VALUES (?, ?, ?)';
+    const values = [data.field1, data.field2, data.field3];
+
+    connection.query(sql, values, (err, result) => {
+      if (err) {
+        console.error('Error inserting data into MySQL:', err);
+      } else {
+        console.log(`Data appended to MySQL database. Inserted rows: ${result.affectedRows}`);
+      }
+
+      // Close the MySQL connection
+      connection.end();
+    });
+  });
+};
+
+// Example usage:
+const dataToInsert = {
+  field1: 'value1',
+  field2: 'value2',
+  field3: 'value3',
+};
+
+appendToBookingMySQL(dataToInsert);

@@ -1,27 +1,39 @@
 const express = require("express");
 const router = express.Router();
+const { appendToBookingMySQL } = require('../Middlewares/save_booking_mysql.js'); // Adjust the path
+
+
+
 
 // Define a route to handle form data and send emails
-router.post("/send-email", (req, res) => {
+router.post("/send-booking", (req, res) => {
   // Extract data from the body of the request
-  console.log(req.body);
-  const fullname = req.body.fullname;
-  const email = req.body.email;
-  const time = req.body.time;
-  const comments = req.body.comments;
-  const bookingSubject = req.body.subject;
-  const date = req.body.date;
-  const phone = req.body.phone;
-  const creationDate = req.body.creationDate
-  const textToSend = `Booking request received at ${Date()}\nName: ${fullname}\nE-mail: ${email}\nSubject:${bookingSubject}\nAt:${time}\nComments: ${comments}\nRequest creation: ${date}\nPhone number: ${phone}\nCreation date: ${creationDate}`;
+  const { fullname, email, time, comments, subject, date, phone, creationDate } = req.body;
+  console.log(`req.body: ${req.body.subject}`);
+  
+  const textToSend = `Booking request received at ${Date()}\nName: ${fullname}\nE-mail: ${email}\nSubject:${subject}\nAt:${time}\nComments: ${comments}\nRequest creation: ${date}\nPhone number: ${phone}\nCreation date: ${creationDate}`;
+ 
   // Display data to console
   console.log(textToSend);
+
+  //Store data to the sql db
+  appendToBookingMySQL(
+    fullname,
+    email,
+    time,
+    comments,
+    subject,
+    date,
+    phone,
+    creationDate
+  );
+
   // Emit a custom event to send data to WebSocket server
   req.app.get("eventEmitter").emit("broadcast", req.body);
 
   // Return a response to the frontend
   res.json({
-    message: "Sent successfully",
+    message: "Sent successfully.",
   });
 });
 

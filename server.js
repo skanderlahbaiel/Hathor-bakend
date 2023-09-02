@@ -1,13 +1,19 @@
+const cors = require('cors');
 const EventEmitter = require("events");
 const formToEmailRoute = require("./routes/form-to-email.js");
+const getData= require("./routes/retrieve-booking-data.js")
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws"); // Import the 'ws' library
+
+
 
 const app = express();
 const eventEmitter = new EventEmitter();
 app.set("eventEmitter", eventEmitter);
 const port = process.env.PORT || 3000;
+app.use(cors());
+
 
 const server = http.createServer(app);
 
@@ -15,6 +21,7 @@ const server = http.createServer(app);
 
 app.use(express.json()); // Parse incoming JSON data
 app.use("/booking", formToEmailRoute);
+app.use("/booking", getData );
 
 // Store connected clients (staff/baristas)
 const connectedClients = new Set();
@@ -34,6 +41,7 @@ eventEmitter.on("broadcast", (data) => {
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(data));
+      
     }
   });
 });
