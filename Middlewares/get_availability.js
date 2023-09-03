@@ -1,33 +1,25 @@
 const mysql = require("mysql");
 
 // MySQL database connection configuration
-const dbConfig = {
-  host: "localhost",
-  user: "root",
-  password: "skanderR1deathnote",
-  database: "booking_info",
-  connectionLimit: 10,
-  queueLimit: 0,
-  connectTimeout: 200000,
-  debug: true,
-  insecureAuth: true,
-};
+const dbConfig = require("../config/dbconfig")
 
 // Create a connection pool for the MySQL database
 const pool = mysql.createPool(dbConfig);
 
-// Middleware function to retrieve data from the database
-const fetchDataFromDatabase = (req, res, next) => {
+// Middleware function to retrieve all data from the "availability" table
+const getAllAvailability = (req, res, next) => {
   // Use the connection pool to get a connection
   pool.getConnection((err, connection) => {
+    console.log("Setting connection.")
     if (err) {
       console.error("Error getting MySQL connection:", err);
       res.status(500).json({ error: "Unable to fetch data" });
       return;
     }
 
-    // Define your SQL query to retrieve data
-    const sql = "SELECT * FROM orders"; 
+    // Define your SQL query to retrieve all data
+    const sql = "SELECT * FROM availability";
+
     // Execute the query
     connection.query(sql, (queryErr, results) => {
       // Release the connection back to the pool
@@ -40,12 +32,12 @@ const fetchDataFromDatabase = (req, res, next) => {
       }
 
       // Attach the retrieved data to the request object
-      req.dbData = results;
+      req.availabilityData = results;
 
       // Call the next middleware or route handler
-      next();
+      res.json(results);
     });
   });
 };
 
-module.exports = { fetchDataFromDatabase };
+module.exports =  getAllAvailability ;

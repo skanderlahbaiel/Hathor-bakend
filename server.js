@@ -1,7 +1,9 @@
 const cors = require('cors');
 const EventEmitter = require("events");
-const formToEmailRoute = require("./routes/form-to-email.js");
-const getData= require("./routes/retrieve-booking-data.js")
+const formToEmailRoute = require("./routes/booking-to-db.js");
+const getData= require("./routes/retrieve-booking-data.js");
+const checkDateExists = require("./routes/accept-ticket.js")
+const get_availability = require("./Middlewares/get_availability.js")
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws"); // Import the 'ws' library
@@ -22,7 +24,8 @@ const server = http.createServer(app);
 app.use(express.json()); // Parse incoming JSON data
 app.use("/booking", formToEmailRoute);
 app.use("/booking", getData );
-
+app.use("/database", checkDateExists);
+app.use("/get-availability", get_availability)
 // Store connected clients (staff/baristas)
 const connectedClients = new Set();
 
