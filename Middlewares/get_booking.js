@@ -50,7 +50,18 @@ const getAllBookings = (req, res, next) => {
 // Middleware function to retrieve filtered data from the database
 const getFilteredBookings = (req, res, next) => {
   // Extract filter criteria from req.params
-  const { status, date, time, id, fullname, subject, phone, email } = req.query;
+  const {
+    status,
+    date,
+    time,
+    id,
+    fullname,
+    subject,
+    phone,
+    email,
+    creationDate,
+    comments,
+  } = req.query;
 
   // Start building the SQL query
   let sql = "SELECT * FROM orders WHERE 1=1"; // Always true condition to build upon
@@ -69,7 +80,7 @@ const getFilteredBookings = (req, res, next) => {
     sql += ` AND time LIKE '%${time}%'`;
   }
   if (id) {
-    sql += ` AND id LIKE '%${id}%'`;
+    sql += ` AND id = ${id}`;
   }
   if (fullname) {
     sql += ` AND fullname LIKE '%${fullname}%'`;
@@ -80,6 +91,13 @@ const getFilteredBookings = (req, res, next) => {
   if (phone) {
     sql += ` AND phone LIKE '%${phone}%'`;
   }
+  if (creationDate) {
+    sql += ` AND creationDate LIKE '%${creationDate}%'`
+  }
+  if (comments) {
+    sql += ` AND comments LIKE '%${comments}%'`
+  }
+
   console.log("Constructed SQL Query:", sql);
 
   // Use the connection pool to get a connection

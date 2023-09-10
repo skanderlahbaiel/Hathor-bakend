@@ -1,12 +1,13 @@
 const cors = require('cors');
 const EventEmitter = require("events");
-const formToEmailRoute = require("./routes/booking-to-db.js");
-const getData= require("./routes/retrieve-booking-data.js");
-const checkDateExists = require("./routes/accept-ticket.js")
+const bookingOrderToDb = require("./routes/booking-to-db.js");
+const getBookingData= require("./routes/retrieve-booking-data.js");
+const confirmOrder = require("./routes/accept-desk-ticket.js")
 const get_availability = require("./Middlewares/get_availability.js")
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws"); // Import the 'ws' library
+const rejectOrder = require("./routes/reject-order.js")
 
 
 
@@ -22,10 +23,11 @@ const server = http.createServer(app);
 
 
 app.use(express.json()); // Parse incoming JSON data
-app.use("/booking", formToEmailRoute);
-app.use("/booking", getData );
-app.use("/database", checkDateExists);
+app.use("/booking", bookingOrderToDb);
+app.use("/booking", getBookingData );
+app.use("/database", confirmOrder);
 app.use("/get-availability", get_availability)
+app.use("/reject-order", rejectOrder)
 // Store connected clients (staff/baristas)
 const connectedClients = new Set();
 
@@ -66,7 +68,7 @@ socket.on("close", () => {
   // Handle WebSocket events
   socket.on("message", (message) => {
     console.log("Received message:", message);
-    socket.send('Backend Websocket server received message');
+    // socket.send('Backend Websocket server received message');
   });
 
   

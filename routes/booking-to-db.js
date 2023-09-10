@@ -11,9 +11,10 @@ router.post("/send-booking",appendToBookingMySQL, (req, res) => {
   // Emit a custom event to send data to WebSocket server
   req.app.get("eventEmitter").emit("broadcast", req.body);
   // Return a response to the frontend
-  res.json({
+  res.status(200).json({
     message: "Booking stored and sent to live successfully.",
   });
+  console.log(res.status)
 });
 
 module.exports = router;

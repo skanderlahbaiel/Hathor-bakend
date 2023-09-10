@@ -9,7 +9,6 @@ const dbConfig = {
   connectionLimit: 10,
   queueLimit: 0,
   connectTimeout: 200000,
-
   insecureAuth: true,
 };
 
@@ -17,7 +16,17 @@ const pool = mysql.createPool(dbConfig);
 
 // Middleware function to insert data into the booking_slot_email table
 function insertBookingSlotEmail(req, res, next) {
-  const { booking_id, booking_date, booking_time } = req.body;
+  const { booking_id, booking_date, booking_time, status } = req.body;
+
+  if (status === 'confirmed') {
+    res.status(400).json({ error: 'Order status is already confirmed' });
+    return;
+  }
+
+  else if (status === 'refused') {
+    res.status(400).json({ error: 'The status of this order is set to refused.' });
+    return;
+  }
 
   // Step 1: Retrieve the booking_id from the orders table based on booking_id
   const getBookingIdQuery = "SELECT id FROM orders WHERE id = ?";

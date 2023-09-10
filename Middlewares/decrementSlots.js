@@ -45,33 +45,10 @@ function decrementOrSetSlots(req, res, next) {
         // Continue to the next middleware or route
         connection.release();
         console.log("SLots decremented by 1.")
-        res.status(200).json({"message": "Decremnted slots by 1."});
+        next()
       });
     });
-  } else {
-    // No slots available, set slots to 28
-    const setTo28Query = 'INSERT INTO availability (booking_date, booking_time, available_slots) VALUES (?, ?, 28)';
-    pool.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error getting a MySQL connection:', err);
-        res.status(500).json({ error: 'Database error' });
-        return;
-      }
-
-      connection.query(setTo28Query, [booking_date, booking_time], (setTo28Error) => {
-        if (setTo28Error) {
-          connection.release();
-          console.error('Error setting slots to 28:', setTo28Error);
-          res.status(500).json({ error: 'Database error' });
-          return;
-        }
-
-        
-        connection.release();
-        res.status(200).json({"message":"Available. slotsCount initiliased to 28."})
-      });
-    });
-  }
+  } 
 }
 
 module.exports = decrementOrSetSlots;
